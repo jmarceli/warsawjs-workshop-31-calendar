@@ -17,10 +17,17 @@ describe("day.routing", () => {
     const event = new EventModel({
       description: "Desc",
       notification: false,
-      time: "2019-03-11T00:00",
+      time: "2019-03-11T13:30",
       title: "Event title"
     });
     await event.save();
+    const event2 = new EventModel({
+      description: "Desc",
+      notification: false,
+      time: "2019-03-11T14:30",
+      title: "Event title"
+    });
+    await event2.save();
   });
 
   afterAll(async () => {
@@ -39,5 +46,7 @@ describe("day.routing", () => {
     const valid = validate(res.body);
     expect(valid).toBe(true);
     expect(validate.errors).toBeNull();
+
+    expect(res.body.data.length).toBe(2);
   });
 });

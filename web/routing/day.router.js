@@ -7,7 +7,9 @@ const dayjs = require("dayjs");
 
 router.get("/api/day", async (req, res) => {
   const query = {
-    time: dayjs(req.query.date).format("YYYY-MM-DDTHH:mm")
+    time: {
+      $regex: new RegExp(dayjs(req.query.date).format("YYYY-MM-DD"), "i")
+    }
   };
   const docsInDb = await EventModel.find(query);
   const data = docsInDb.map(doc => ({ ...doc.toObject(), id: doc._id }));
