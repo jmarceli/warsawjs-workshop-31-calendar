@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+router.get("/", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
-module.exports = (app) => {
+module.exports = app => {
   app.use(router);
 };

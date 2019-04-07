@@ -1,6 +1,6 @@
-const express = require('express');
-const supertest = require('supertest');
-const router = require('../web/routing/base.router');
+const express = require("express");
+const supertest = require("supertest");
+const router = require("../web/routing/base.router");
 
 let app;
 
@@ -9,11 +9,15 @@ beforeEach(() => {
   router(app);
 });
 
-it('has / endpoint', async () => {
-  const res = await supertest(app).get('/').expect(200);
-  expect(res.body.status).toEqual('ok');
+it("has / endpoint", async () => {
+  const res = await supertest(app)
+    .get("/")
+    .expect(200);
+  expect(res.body.status).toEqual("ok");
 });
 
-it('no api/ endpoint', async () => {
-  await supertest(app).get('/api').expect(404);
+it("no api/ endpoint", async () => {
+  await supertest(app)
+    .get("/api")
+    .expect(404);
 });
