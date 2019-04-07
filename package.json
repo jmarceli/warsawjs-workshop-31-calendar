@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "test:watch": "nodemon ./node_modules/.bin/jasmine test/**/*.test.js",
     "test": "jasmine test/**/*.test.js"
   },
   "author": "Jan Grzegorowski",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "jasmine": "^3.4.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "supertest": "^4.0.2"
   }
 }
