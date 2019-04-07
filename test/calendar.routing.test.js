@@ -13,13 +13,13 @@ beforeEach(() => {
 
 it("has api/calendar endpoint", async () => {
   const res = await supertest(app)
-    .get("/api/calendar")
+    .get("/api/calendar?month=2019-03")
     .expect(200);
 });
 
-it("respond with expect data", async () => {
+it("responds with expect data for given year and month (2019-03)", async () => {
   const validate = ajv.compile(schema);
-  const res = await supertest(app).get("/api/calendar");
+  const res = await supertest(app).get("/api/calendar?month=2019-03");
   const valid = validate(res.body);
   expect(valid).toBe(true);
   expect(validate.errors).toBeNull();
