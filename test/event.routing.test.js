@@ -10,7 +10,7 @@ const validate = ajv.compile(schema);
 
 let app;
 
-describe("event.routing", () => {
+describe("event.routing POST", () => {
   beforeAll(async () => {
     app = express();
     app.use(bodyParser.json());
@@ -48,5 +48,40 @@ describe("event.routing", () => {
 
     const numberOfDocs = await EventModel.countDocuments();
     expect(initNumberOfDocs + 1).toBe(numberOfDocs);
+  });
+});
+
+describe("event.routing DELETE", () => {
+  let event;
+  beforeAll(async () => {
+    app = express();
+    app.use(bodyParser.json());
+    router(app);
+    await db.connect();
+    await EventModel.deleteMany();
+    event = new EventModel({
+      description: "Desc",
+      notification: false,
+      time: "2019-03-11T00:00",
+      title: "Event title"
+    });
+    await event.save();
+  });
+
+  afterAll(async () => {
+    await EventModel.deleteMany();
+  });
+
+  it("has api/event endpoint which deletes an event", async () => {
+    const res = await supertest(app)
+      .delete(`/api/event/${event._id}`)
+      .expect(200);
+
+    const valid = validate(res.body);
+    expect(valid).toBe(true);
+    expect(validate.errors).toBeNull();
+
+    const numberOfDocs = await EventModel.countDocuments();
+    expect(numberOfDocs).toBe(0);
   });
 });
