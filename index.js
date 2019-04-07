@@ -5,8 +5,12 @@ require('dotenv').config({ path: path.join(__dirname, 'config', 'app.env') });
 
 const app = express();
 
+require('./web/routing/base.router')(app);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, (err) => {
+  if (err) {
+    console.error('Server running error');
+  }
   console.log(`Server listening at http://localhost:${process.env.PORT}`);
 });
 
