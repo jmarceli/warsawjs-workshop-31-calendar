@@ -6,7 +6,7 @@ const ajv = new require("ajv")();
 
 let app;
 
-beforeEach(() => {
+beforeAll(() => {
   app = express();
   router(app);
 });

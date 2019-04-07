@@ -2,34 +2,49 @@ const express = require("express");
 const supertest = require("supertest");
 const bodyParser = require("body-parser");
 const ajv = new require("ajv")();
+const db = require("../db");
 const router = require("../web/routing/event.router");
+const EventModel = require("../models/event.model");
 const schema = require("../docs/schemas/event.scheme");
+const validate = ajv.compile(schema);
 
 let app;
 
-beforeEach(() => {
+beforeAll(async () => {
   app = express();
   app.use(bodyParser.json());
   router(app);
+  await db.connect();
+  await EventModel.deleteMany();
 });
 
-it("has api/event endpoint", async () => {
+afterAll(async () => {
+  await EventModel.deleteMany();
+});
+
+it("has api/event endpoint which creates an event", async () => {
+  const initNumberOfDocs = await EventModel.countDocuments();
   const res = await supertest(app)
     .post("/api/event")
     .send({
-      description: "",
+      description: "Desc",
       notification: false,
       time: "2019-04-07T00:00",
-      title: ""
+      title: "Event title"
     })
     .set("Accept", "application/json")
     .expect("Content-Type", /json/)
     .expect(200);
 
-  expect(res.body).toEqual({
-    description: "",
-    notification: false,
-    time: "2019-04-07T00:00",
-    title: ""
-  });
+  const valid = validate(res.body);
+  expect(valid).toBe(true);
+  expect(validate.errors).toBeNull();
+
+  const docInDb = await EventModel.findOne({ _id: res.body.id });
+  expect(docInDb._id.toString()).toBe(res.body.id);
+  expect(docInDb.description).toBe("Desc");
+  expect(docInDb.title).toBe("Event title");
+
+  const numberOfDocs = await EventModel.countDocuments();
+  expect(initNumberOfDocs + 1).toBe(numberOfDocs);
 });

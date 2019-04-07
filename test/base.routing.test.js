@@ -4,7 +4,7 @@ const router = require("../web/routing/base.router");
 
 let app;
 
-beforeEach(() => {
+beforeAll(() => {
   app = express();
   router(app);
 });
