@@ -85,3 +85,49 @@ describe("event.routing DELETE", () => {
     expect(numberOfDocs).toBe(0);
   });
 });
+
+describe("event.routing PUT", () => {
+  let event;
+  beforeAll(async () => {
+    app = express();
+    app.use(bodyParser.json());
+    router(app);
+    await db.connect();
+    await EventModel.deleteMany();
+    event = new EventModel({
+      description: "Desc",
+      notification: false,
+      time: "2019-03-11T00:00",
+      title: "Event title"
+    });
+    await event.save();
+  });
+
+  afterAll(async () => {
+    await EventModel.deleteMany();
+  });
+
+  it("has api/event endpoint which deletes an event", async () => {
+    const res = await supertest(app)
+      .put(`/api/event/${event._id}`)
+      .send({
+        description: "Desc 123",
+        notification: false,
+        time: "2019-03-11T00:00",
+        title: "Event title 123"
+      })
+      .expect(200);
+
+    const valid = validate(res.body);
+    expect(valid).toBe(true);
+    expect(validate.errors).toBeNull();
+
+    const docInDb = await EventModel.findOne({ _id: event._id });
+    expect(docInDb._id.toString()).toBe(event._id.toString());
+    expect(docInDb.description).toBe("Desc 123");
+    expect(docInDb.title).toBe("Event title 123");
+
+    const numberOfDocs = await EventModel.countDocuments();
+    expect(numberOfDocs).toBe(1);
+  });
+});
