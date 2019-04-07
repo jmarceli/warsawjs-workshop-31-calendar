@@ -2,10 +2,18 @@ const express = require('express');
 const supertest = require('supertest');
 const router = require('../web/routing/base.router');
 
-it('works', async () => {
-  const app = express();
-  router(app);
+let app;
 
+beforeEach(() => {
+  app = express();
+  router(app);
+});
+
+it('has / endpoint', async () => {
   const res = await supertest(app).get('/').expect(200);
   expect(res.body.status).toEqual('ok');
+});
+
+it('no api/ endpoint', async () => {
+  await supertest(app).get('/api').expect(404);
 });
